@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Object = UnityEngine.Object;
 
-namespace JvLib.Collections
+namespace JvLib.Events
 {
     public abstract class SafeEventBase
     {
