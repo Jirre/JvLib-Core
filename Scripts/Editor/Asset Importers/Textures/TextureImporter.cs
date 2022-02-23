@@ -66,6 +66,9 @@ namespace JvLib.Editor.AssetImporters.Textures
                 filePath = TrimToContainingFolder(filePath);
             }
 
+            if (settings == null)
+                return;
+
             importer.maxTextureSize = settings.MaxSize;
             importer.textureCompression = settings.Compression;
             if (settings.Compression != TextureImporterCompression.Uncompressed)
