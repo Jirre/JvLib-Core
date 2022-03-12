@@ -5,7 +5,7 @@ namespace JvLib.StateMachines
     public abstract class AStateBehaviour : MonoBehaviour
     {
         public State GetCurrentState() =>
-            States?.CurrentState ?? null;
+            States?.CurrentState;
 
         public string GetCurrentStateName() =>
             States?.CurrentState?.Name ?? "NULL";
@@ -27,7 +27,7 @@ namespace JvLib.StateMachines
             States.GotoState("InitState");
         }
 
-        public abstract int InitState(State pState, float pTime);
+        protected abstract int InitState(State pState, float pTime);
 
         protected virtual void Start() => InitStates();
         protected virtual void Update() => States.Update(Time.time);

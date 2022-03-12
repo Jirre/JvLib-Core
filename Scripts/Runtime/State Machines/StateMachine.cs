@@ -8,42 +8,40 @@ namespace JvLib.StateMachines
     public class State
     {
         #region  State Properties
-        private string _name = "unknown";
-        public string Name { get => _name; }
 
-        private bool _firstFrame = false;
-        public bool IsFistFrame { get => _firstFrame; }
+        public string Name { get; }
 
-        private float _activationTime = 0.0f;
+        public bool IsFistFrame { get; private set; }
+
+        private float _activationTime;
         public float GetTimeActive() => Time.time - _activationTime;
         #endregion
 
         #region Constructor
-        public State(StateMachine pList, string pName, StateDelegate pUpdate, StateDelegate pActivation, StateDelegate pDeactivation)
+        public State(StateMachine pList, string pName, StateDelegate pUpdate, StateDelegate pActivation = null, StateDelegate pDeactivation = null)
         {
             _stateList = pList;
-            _name = pName;
+            Name = pName;
             _updateFunction = pUpdate;
             _activateFunction = pActivation;
             _deactivateFunction = pDeactivation;
         }
         //Constructor Variations
-        public State(StateMachine pList, string pName, StateDelegate pUpdate)
-            : this(pList, pName, pUpdate, null, null) { }
+
         #endregion
 
         #region Update Functions
 
 
         public delegate int StateDelegate(State pCallerState, float pTime);
-        private StateDelegate _activateFunction = null;
-        private StateDelegate _updateFunction = null;
-        private StateDelegate _deactivateFunction = null;
+        private readonly StateDelegate _activateFunction;
+        private readonly StateDelegate _updateFunction;
+        private readonly StateDelegate _deactivateFunction;
 
         /// <summary>
         /// Calls the internal Update Function related to this state
         /// </summary>
-        /// <param name="pTime">Curent Time to ascertain lifetime</param>
+        /// <param name="pTime">Current Time to ascertain lifetime</param>
         /// <returns>Return Code (-1 = internal Error)</returns>
         public virtual int Update(float pTime)
         {
@@ -51,18 +49,18 @@ namespace JvLib.StateMachines
             if (_updateFunction != null)
                 result = _updateFunction(this, pTime);
 
-            _firstFrame = false;
+            IsFistFrame = false;
             return result;
         }
 
         /// <summary>
         /// Calls the internal Activation Function related to this state
         /// </summary>
-        /// <param name="pTime">Curent Time to ascertain lifetime</param>
+        /// <param name="pTime">Current Time to ascertain lifetime</param>
         /// <returns>Return Code (-1 = internal Error)</returns>
         public virtual int Activate(float pTime)
         {
-            _firstFrame = true;
+            IsFistFrame = true;
             _activationTime = pTime;
             if (_activateFunction != null)
             {
@@ -75,7 +73,7 @@ namespace JvLib.StateMachines
         /// <summary>
         /// Calls the internal Deactivation Function related to this state
         /// </summary>
-        /// <param name="pTime">Curent Time to ascertain lifetime</param>
+        /// <param name="pTime">Current Time to ascertain lifetime</param>
         /// <returns>Return Code (-1 = internal Error)</returns>
         public virtual int Deactivate(float pTime)
         {
@@ -89,8 +87,8 @@ namespace JvLib.StateMachines
         #endregion
 
         #region State Navigation
-        public StateMachine _stateList = null;
-        public StateMachine Parent { get => _stateList; }
+
+        private readonly StateMachine _stateList;
 
         /// <summary>
         /// Navigates to the requested state (if it exists)
@@ -121,23 +119,18 @@ namespace JvLib.StateMachines
     public class StateMachine
     {
         private Hashtable _stateTable;
-        public int Count { get => _stateTable?.Count ?? 0; }
+        public int Count => _stateTable?.Count ?? 0;
 
-        private State _currentState = null;
-        public State CurrentState { get => _currentState; }
+        public State CurrentState { get; private set; }
+        public State PreviousState { get; private set; }
 
-        private State _previousState = null;
-        public State PreviousState { get => _previousState; }
-
-        private string _listName = "unknown";
+        private string _listName;
 
         #region Constructor
         public StateMachine(string pName)
         {
             _listName = pName;
-            if (_stateTable != null)
-                _stateTable.Clear();
-            else _stateTable = new Hashtable();
+            _stateTable = new Hashtable();
         }
         #endregion
 
@@ -147,7 +140,7 @@ namespace JvLib.StateMachines
         /// </summary>
         /// <param name="pName">The state to check against the current state</param>
         public bool IsCurrentState(string pName) =>
-            (!string.IsNullOrEmpty(pName) && _currentState?.Name == pName);
+            (!string.IsNullOrEmpty(pName) && CurrentState?.Name == pName);
 
         /// <summary>
         /// Does the state machine contain a state with the given name
@@ -159,7 +152,7 @@ namespace JvLib.StateMachines
         #region State Registration
         public bool Add(string pName, State.StateDelegate pOnUpdate, State.StateDelegate pOnActivate, State.StateDelegate pOnDeactivate)
         {
-            if (_stateTable == null) _stateTable = new Hashtable();
+            _stateTable ??= new Hashtable();
 
             if (_stateTable.ContainsKey(pName))
             {
@@ -223,32 +216,32 @@ namespace JvLib.StateMachines
         /// <summary>
         /// Sets the state of this state machine to the given state
         /// </summary>
-        /// <param name="pState">The state to set the statemachine to</param>
+        /// <param name="pState">The state to set the state-machine to</param>
         public void GotoState(State pState)
         {
-            if (_currentState == pState) // This is already the current state
+            if (CurrentState == pState) // This is already the current state
                 return;
 
             float currentTime = Time.time;
-            if(_currentState != null)
+            if(CurrentState != null)
             {
-                _previousState = _currentState;
-                _previousState.Deactivate(currentTime);
+                PreviousState = CurrentState;
+                PreviousState.Deactivate(currentTime);
             }
-            _currentState = pState;
-            _currentState.Activate(currentTime);
+            CurrentState = pState;
+            CurrentState.Activate(currentTime);
         }
         /// <summary>
         /// Sets the state of this state machine to the state with the given name
         /// </summary>
         /// <param name="pName">Name of the state to set the state machine to</param>
-        /// <returns>Was the setting of the state succesfull</returns>
+        /// <returns>Was the setting of the state successful</returns>
         public bool GotoState(string pName)
         {
-            State lState = GetState(pName);
-            if (TryGetState(pName, out State state))
+            State state = GetState(pName);
+            if (HasState(pName))
             {
-                GotoState(lState);
+                GotoState(state);
                 return true;
             }
             Debug.LogError("Unknown State:" + pName);
@@ -263,31 +256,28 @@ namespace JvLib.StateMachines
         /// <returns>Return Code of the function</returns>
         public int Update(float pTime)
         {
-            if (_currentState != null)
+            if (CurrentState == null) return -2;
+            int returnValue = 0;
+            try
             {
-                int returnValue = 0;
-                try
-                {
-                    returnValue = _currentState.Update(pTime);
-                }
-                catch (Exception lException)
-                {
-                    string lMessageStr = "State: " + _listName + "; Exception in Update state:" + _currentState.Name + ", " + lException.ToString();
-                    Debug.LogError(lMessageStr);
-                }
-                return returnValue;
+                returnValue = CurrentState.Update(pTime);
             }
-            return -2;
+            catch (Exception lException)
+            {
+                string lMessageStr = "State: " + _listName + "; Exception in Update state:" + CurrentState.Name + ", " + lException;
+                Debug.LogError(lMessageStr);
+            }
+            return returnValue;
         }
 
         public override string ToString()
         {
-            string lStr = string.Format("StateList {0} - {1} - {2}\n", _listName, _stateTable, _currentState?.Name ?? "null");
+            string lStr = $"StateList {_listName} - {_stateTable} - {CurrentState?.Name ?? "null"}\n";
             foreach (KeyValuePair<string, object> e in _stateTable)
             {
                 if (e.Value is State s)
                 {
-                    lStr += string.Format("{0}\n", s.Name);
+                    lStr += $"{s.Name}\n";
                 }
             }
             return lStr;
