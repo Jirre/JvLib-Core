@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static partial class ParseUtility //Byte
     {
@@ -11,8 +11,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static byte ByteParse(string pString, byte pDefault = 0)
         {
-            if (byte.TryParse(pString, out byte result)) return result;
-            return pDefault;
+            return byte.TryParse(pString, out byte result) ? result : pDefault;
         }
 
         /// <summary>
@@ -20,8 +19,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static byte ByteParse(string pString, System.Globalization.NumberStyles pStyle, byte pDefault = 0)
         {
-            if (byte.TryParse(pString, pStyle, null, out byte result)) return result;
-            return pDefault;
+            return byte.TryParse(pString, pStyle, null, out byte result) ? result : pDefault;
         }
 
         /// <summary>
@@ -29,8 +27,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static byte ByteParse(string pString, System.Globalization.NumberStyles pStyle, IFormatProvider pFormat, byte pDefault = 0)
         {
-            if (byte.TryParse(pString, pStyle, pFormat, out byte result)) return result;
-            return pDefault;
+            return byte.TryParse(pString, pStyle, pFormat, out byte result) ? result : pDefault;
         }
 
         /// <summary>
@@ -39,12 +36,10 @@ namespace JvLib.Utilities
         public static List<byte> ByteParse(string pString, char pSeperator, byte pDefault = 0)
         {
             List<byte> lList = new List<byte>();
-            if ((pString?.Length ?? 0) > 0)
-            {
-                string[] lStrArray = pString.Split(pSeperator);
-                foreach (string lStr in lStrArray)
-                    lList.Add(ByteParse(lStr, pDefault));
-            }
+            if ((pString?.Length ?? 0) <= 0) return lList;
+            string[] lStrArray = pString.Split(pSeperator);
+            foreach (string lStr in lStrArray)
+                lList.Add(ByteParse(lStr, pDefault));
             return lList;
         }
 
@@ -53,8 +48,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static byte ByteParse(List<byte> pList, int pIndex, byte pDefault = 0)
         {
-            if ((pList?.Count ?? 0) <= pIndex) return pDefault;
-            return pList[pIndex];
+            return (pList?.Count ?? 0) <= pIndex ? pDefault : pList[pIndex];
         }
 
         /// <summary>
@@ -63,9 +57,7 @@ namespace JvLib.Utilities
         public static byte ByteParse(IDictionary pDictionary, string pKey, byte pDefault = 0)
         {
             if (pDictionary == null || string.IsNullOrWhiteSpace(pKey)) return pDefault;
-            if (!pDictionary.Contains(pKey)) return pDefault;
-
-            return ByteParse((string)pDictionary[pKey], pDefault);
+            return !pDictionary.Contains(pKey) ? pDefault : ByteParse((string)pDictionary[pKey], pDefault);
         }
     }
 }

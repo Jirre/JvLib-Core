@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static class TextureUtility
     {

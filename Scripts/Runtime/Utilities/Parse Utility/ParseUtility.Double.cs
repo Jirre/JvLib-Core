@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static partial class ParseUtility
     {
@@ -11,8 +11,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static double DoubleParse(string pString, double pDefault = 0f)
         {
-            if (double.TryParse(pString, out double result)) return result;
-            return pDefault;
+            return double.TryParse(pString, out double result) ? result : pDefault;
         }
 
         /// <summary>
@@ -20,8 +19,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static double DoubleParse(string pString, System.Globalization.NumberStyles pStyle, double pDefault = 0f)
         {
-            if (double.TryParse(pString, pStyle, null, out double result)) return result;
-            return pDefault;
+            return double.TryParse(pString, pStyle, null, out double result) ? result : pDefault;
         }
 
         /// <summary>
@@ -29,8 +27,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static double DoubleParse(string pString, System.Globalization.NumberStyles pStyle, IFormatProvider pFormat, double pDefault = 0f)
         {
-            if (double.TryParse(pString, pStyle, pFormat, out double result)) return result;
-            return pDefault;
+            return double.TryParse(pString, pStyle, pFormat, out double result) ? result : pDefault;
         }
 
         /// <summary>
@@ -39,7 +36,7 @@ namespace JvLib.Utilities
         public static double DoubleParse(List<double> pList, int pIndex, double pDefault = 0)
         {
             if ((pList?.Count ?? 0) <= pIndex) return pDefault;
-            return pList[pIndex];
+            return pList != null ? pList[pIndex] : pDefault;
         }
 
         /// <summary>
@@ -48,12 +45,10 @@ namespace JvLib.Utilities
         public static List<double> DoubleParse(string pString, char pSeperator, double pDefault = 0)
         {
             List<double> lList = new List<double>();
-            if ((pString?.Length ?? 0) > 0)
-            {
-                string[] lStrArray = pString.Split(pSeperator);
-                foreach (string lStr in lStrArray)
-                    lList.Add(DoubleParse(lStr, pDefault));
-            }
+            if ((pString?.Length ?? 0) <= 0) return lList;
+            string[] lStrArray = pString.Split(pSeperator);
+            foreach (string lStr in lStrArray)
+                lList.Add(DoubleParse(lStr, pDefault));
             return lList;
         }
 
@@ -63,9 +58,7 @@ namespace JvLib.Utilities
         public static double DoubleParse(IDictionary pDictionary, string pKey, double pDefault = 0)
         {
             if (pDictionary == null || string.IsNullOrWhiteSpace(pKey)) return pDefault;
-            if (!pDictionary.Contains(pKey)) return pDefault;
-
-            return DoubleParse((string)pDictionary[pKey], pDefault);
+            return !pDictionary.Contains(pKey) ? pDefault : DoubleParse((string)pDictionary[pKey], pDefault);
         }
     }
 }

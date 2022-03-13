@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 namespace JvLib.Services
@@ -167,6 +168,30 @@ namespace JvLib.Services
                     _onReadyCallbacks[pType] = pCallback;
                 }
             }
+        }
+
+        #endregion
+
+        #region --- REMOVE ---
+
+        public void Remove<T>(T pInstance)
+        {
+            if (!HasService(typeof(T)))
+                return;
+            if (pInstance is IDisposable)
+                ((IDisposable)pInstance).Dispose();
+            
+            _register.Remove(typeof(T));
+        }
+
+        public void RemoveAll()
+        {
+            foreach (KeyValuePair<Type, IService> kvPair in _register)
+            {
+                if (kvPair.Value is IDisposable)
+                    (kvPair.Value as IDisposable)?.Dispose();
+            }
+            _register.Clear();
         }
 
         #endregion

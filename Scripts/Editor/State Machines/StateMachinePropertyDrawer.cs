@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-namespace JvLib.StateMachines.Editor
+namespace JvLib.Events.Editor
 {
     using UnityEditor;
-    [CustomPropertyDrawer(typeof(StateMachine))]
+    [CustomPropertyDrawer(typeof(EventStateMachine))]
     public class StateMachinePropertyDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

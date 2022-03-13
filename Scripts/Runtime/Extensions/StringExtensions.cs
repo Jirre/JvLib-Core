@@ -4,24 +4,22 @@ public static partial class StringExtensions
 {
     public static string FirstToUpper(this string value)
     {
-        if (value.Length == 0)
-            return value;
-
-        if (value.Length == 1)
-            return value.ToUpper();
-
-        return value.Substring(0, 1).ToUpper() + value.Substring(1);
+        return value.Length switch
+        {
+            0 => value,
+            1 => value.ToUpper(),
+            _ => value.Substring(0, 1).ToUpper() + value.Substring(1)
+        };
     }
 
     public static string FirstToLower(this string value)
     {
-        if (value.Length == 0)
-            return value;
-
-        if (value.Length == 1)
-            return value.ToLower();
-
-        return value.Substring(0, 1).ToLower() + value.Substring(1);
+        return value.Length switch
+        {
+            0 => value,
+            1 => value.ToLower(),
+            _ => value.Substring(0, 1).ToLower() + value.Substring(1)
+        };
     }
 
     public static string Replace(this string originalString, string oldValue, string newValue, StringComparison comparisonType)

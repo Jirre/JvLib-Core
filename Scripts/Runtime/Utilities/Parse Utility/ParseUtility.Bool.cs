@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static partial class ParseUtility //Bool
     {
@@ -10,8 +10,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static bool BoolParse(string pString, bool pDefault = false)
         {
-            if (bool.TryParse(pString, out bool result)) return result;
-            return pDefault;
+            return bool.TryParse(pString, out bool result) ? result : pDefault;
         }
 
         /// <summary>
@@ -20,12 +19,11 @@ namespace JvLib.Utilities
         public static List<bool> BoolParse(string pString, char pSeperator, bool pDefault = false)
         {
             List<bool> lList = new List<bool>();
-            if ((pString?.Length ?? 0) > 0)
-            {
-                string[] lStrArray = pString.Split(pSeperator);
-                foreach (string lStr in lStrArray)
-                    lList.Add(BoolParse(lStr, pDefault));
-            }
+            if ((pString?.Length ?? 0) <= 0) return lList;
+            
+            string[] lStrArray = pString.Split(pSeperator);
+            foreach (string lStr in lStrArray)
+                lList.Add(BoolParse(lStr, pDefault));
             return lList;
         }
 
@@ -35,7 +33,7 @@ namespace JvLib.Utilities
         public static bool BoolParse(List<bool> pList, int pIndex, bool pDefault = false)
         {
             if ((pList?.Count ?? 0) <= pIndex) return pDefault;
-            return pList[pIndex];
+            return pList?[pIndex] ?? pDefault;
         }
 
         /// <summary>
@@ -44,9 +42,7 @@ namespace JvLib.Utilities
         public static bool BoolParse(IDictionary pDictionary, string pKey, bool pDefault = false)
         {
             if (pDictionary == null || string.IsNullOrWhiteSpace(pKey)) return pDefault;
-            if (!pDictionary.Contains(pKey)) return pDefault;
-
-            return BoolParse((string)pDictionary[pKey], pDefault);
+            return !pDictionary.Contains(pKey) ? pDefault : BoolParse((string)pDictionary[pKey], pDefault);
         }
     }
 }

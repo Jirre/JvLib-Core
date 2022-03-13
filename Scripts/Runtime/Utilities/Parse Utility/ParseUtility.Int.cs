@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static partial class ParseUtility //Int
     {
@@ -11,8 +11,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static int IntParse(string pString, int pDefault = 0)
         {
-            if (int.TryParse(pString, out int result)) return result;
-            return pDefault;
+            return int.TryParse(pString, out int result) ? result : pDefault;
         }
 
         /// <summary>
@@ -20,8 +19,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static int IntParse(string pString, System.Globalization.NumberStyles pStyle, int pDefault = 0)
         {
-            if (int.TryParse(pString, pStyle, null, out int result)) return result;
-            return pDefault;
+            return int.TryParse(pString, pStyle, null, out int result) ? result : pDefault;
         }
 
         /// <summary>
@@ -29,8 +27,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static int IntParse(string pString, System.Globalization.NumberStyles pStyle, IFormatProvider pFormat, int pDefault = 0)
         {
-            if (int.TryParse(pString, pStyle, pFormat, out int result)) return result;
-            return pDefault;
+            return int.TryParse(pString, pStyle, pFormat, out int result) ? result : pDefault;
         }
 
         /// <summary>
@@ -39,7 +36,7 @@ namespace JvLib.Utilities
         public static int IntParse(List<int> pList, int pIndex, int pDefault = 0)
         {
             if ((pList?.Count ?? 0) <= pIndex) return pDefault;
-            return pList[pIndex];
+            return pList != null ? pList[pIndex] : pDefault;
         }
 
         /// <summary>
@@ -48,12 +45,10 @@ namespace JvLib.Utilities
         public static List<int> IntParse(string pString, char pSeperator, int pDefault = 0)
         {
             List<int> lList = new List<int>();
-            if ((pString?.Length ?? 0) > 0)
-            {
-                string[] lStrArray = pString.Split(pSeperator);
-                foreach (string lStr in lStrArray)
-                    lList.Add(IntParse(lStr, pDefault));
-            }
+            if ((pString?.Length ?? 0) <= 0) return lList;
+            string[] lStrArray = pString.Split(pSeperator);
+            foreach (string lStr in lStrArray)
+                lList.Add(IntParse(lStr, pDefault));
             return lList;
         }
 
@@ -63,9 +58,7 @@ namespace JvLib.Utilities
         public static int IntParse(IDictionary pDictionary, string pKey, int pDefault = 0)
         {
             if (pDictionary == null || string.IsNullOrWhiteSpace(pKey)) return pDefault;
-            if (!pDictionary.Contains(pKey)) return pDefault;
-
-            return IntParse((string)pDictionary[pKey], pDefault);
+            return !pDictionary.Contains(pKey) ? pDefault : IntParse((string)pDictionary[pKey], pDefault);
         }
     }
 }

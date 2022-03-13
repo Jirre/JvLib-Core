@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public enum EFieldPropertyType
     {
@@ -10,22 +10,22 @@ namespace JvLib.Utilities
 
     public class FieldOrPropertyInfo
     {
-        private readonly PropertyInfo propertyInfo;
-        private readonly FieldInfo fieldInfo;
-        private readonly string name;
+        private readonly PropertyInfo _propertyInfo;
+        private readonly FieldInfo _fieldInfo;
+        private readonly string _name;
 
-        public FieldOrPropertyInfo(PropertyInfo propertyInfo)
+        public FieldOrPropertyInfo(PropertyInfo pPropertyInfo)
         {
-            this.propertyInfo = propertyInfo;
-            this.fieldInfo = null;
-            this.name = propertyInfo.Name.ToLowerInvariant();
+            _propertyInfo = pPropertyInfo;
+            _fieldInfo = null;
+            _name = pPropertyInfo.Name.ToLowerInvariant();
         }
 
-        public FieldOrPropertyInfo(FieldInfo fieldInfo)
+        public FieldOrPropertyInfo(FieldInfo pFieldInfo)
         {
-            this.propertyInfo = null;
-            this.fieldInfo = fieldInfo;
-            this.name = fieldInfo.Name.ToLowerInvariant();
+            _propertyInfo = null;
+            _fieldInfo = pFieldInfo;
+            _name = pFieldInfo.Name.ToLowerInvariant();
 
         }
 
@@ -33,46 +33,47 @@ namespace JvLib.Utilities
         {
             get
             {
-                if (propertyInfo != null)
-                    return StringUtility.GetHumanReadableText(propertyInfo.Name);
-                return StringUtility.GetHumanReadableText(fieldInfo.Name);
+                if (_propertyInfo != null)
+                    return StringUtility.GetHumanReadableText(_propertyInfo.Name);
+                return StringUtility.GetHumanReadableText(_fieldInfo.Name);
             }
         }
 
         public object GetValue(object target)
         {
-            if (propertyInfo != null)
-                return propertyInfo.GetValue(target, null);
-
-            return fieldInfo.GetValue(target);
+            return _propertyInfo != null ? 
+                _propertyInfo.GetValue(target, null) : 
+                _fieldInfo.GetValue(target);
         }
 
-        public static implicit operator FieldOrPropertyInfo(PropertyInfo propertyInfo)
+        public static implicit operator FieldOrPropertyInfo(PropertyInfo pPropertyInfo)
         {
-            return new FieldOrPropertyInfo(propertyInfo);
+            return new FieldOrPropertyInfo(pPropertyInfo);
         }
 
-        public static implicit operator FieldOrPropertyInfo(FieldInfo fieldInfo)
+        public static implicit operator FieldOrPropertyInfo(FieldInfo pFieldInfo)
         {
-            return new FieldOrPropertyInfo(fieldInfo);
+            return new FieldOrPropertyInfo(pFieldInfo);
         }
 
-        protected bool Equals(FieldOrPropertyInfo other)
+        protected bool Equals(FieldOrPropertyInfo pOther)
         {
-            return string.Equals(name, other.name);
+            return string.Equals(_name, pOther._name);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((FieldOrPropertyInfo)obj);
+            return obj.GetType() == GetType() && 
+                   Equals((FieldOrPropertyInfo)obj);
         }
 
         public override int GetHashCode()
         {
-            return (name != null ? name.GetHashCode() : 0);
+            return _name != null ? 
+                _name.GetHashCode() : 
+                0;
         }
     }
 }

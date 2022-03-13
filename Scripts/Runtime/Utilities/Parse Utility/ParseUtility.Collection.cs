@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static partial class ParseUtility //Collection
     {
@@ -11,13 +11,14 @@ namespace JvLib.Utilities
         {
             string[] keyValuePairs = pString.Split(pParamSeperator);
             Hashtable ht = new Hashtable();
-            if ((keyValuePairs?.Length ?? 0) > 0) foreach (string e in keyValuePairs)
-                {
-                    if (string.IsNullOrEmpty(e) || !e.Contains(pValueSeperator.ToString())) continue;
-                    string[] entry = e.Split(pValueSeperator);
-                    if ((entry?.Length ?? 0) > 0 && !ht.ContainsKey(entry[0]))
-                        ht.Add(entry[0].Trim(), entry[1].Trim());
-                }
+            if ((keyValuePairs?.Length ?? 0) <= 0) return ht;
+            foreach (string e in keyValuePairs)
+            {
+                if (string.IsNullOrEmpty(e) || !e.Contains(pValueSeperator.ToString())) continue;
+                string[] entry = e.Split(pValueSeperator);
+                if ((entry?.Length ?? 0) > 0 && !ht.ContainsKey(entry[0]))
+                    ht.Add(entry[0].Trim(), entry[1].Trim());
+            }
             return ht;
         }
 

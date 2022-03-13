@@ -7,7 +7,7 @@ namespace System.Reflection
         public static Type[] GetLoadableTypes(this Assembly assembly)
         {
             if (assembly == null)
-                throw new ArgumentNullException("assembly");
+                throw new ArgumentNullException(nameof(assembly));
             try
             {
                 return assembly.GetTypes();

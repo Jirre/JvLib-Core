@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static partial class ParseUtility //String
     {
@@ -12,12 +12,10 @@ namespace JvLib.Utilities
         public static List<string> StringParse(string pString, char pSeperator, string pDefault = "")
         {
             List<string> lList = new List<string>();
-            if ((pString?.Length ?? 0) > 0)
-            {
-                string[] lStrArray = pString.Split(pSeperator);
-                foreach (string lStr in lStrArray)
-                    lList.Add(string.IsNullOrEmpty(lStr.Trim()) ? pDefault : lStr.Trim());
-            }
+            if ((pString?.Length ?? 0) <= 0) return lList;
+            string[] lStrArray = pString.Split(pSeperator);
+            foreach (string lStr in lStrArray)
+                lList.Add(string.IsNullOrEmpty(lStr.Trim()) ? pDefault : lStr.Trim());
             return lList;
         }
 
@@ -27,7 +25,7 @@ namespace JvLib.Utilities
         public static string StringParse(List<string> pList, int pIndex, string pDefault = "")
         {
             if ((pList?.Count ?? 0) <= pIndex) return pDefault;
-            return pList[pIndex];
+            return pList != null ? pList[pIndex] : pDefault;
         }
 
         /// <summary>

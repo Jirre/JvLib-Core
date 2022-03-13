@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace JvLib.StateMachines.Editor
+namespace JvLib.Events.Editor
 {
     using UnityEditor;
     [CustomEditor(typeof(AStateBehaviour), true, isFallback = true)]

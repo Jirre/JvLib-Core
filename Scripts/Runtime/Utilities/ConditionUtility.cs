@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public enum EBoolCondition
     {
@@ -45,31 +45,31 @@ namespace JvLib.Utilities
         /// Checks if float Value matches the codition
         /// </summary>
         /// <param name="buffer">Implements a buffer to catch floating point errors on an 'equal' check</param>
-        public static bool IsMatching(float value, float target, ENumericCondition condition, float buffer = 0f)
+        public static bool IsMatching(float pValue, float pTarget, ENumericCondition pCondition, float buffer = 0f)
         {
-            return condition switch
+            return pCondition switch
             {
                 ENumericCondition.Ignore => true,
 
-                ENumericCondition.Equal => Mathf.Approximately(value, target) || Mathf.Abs(value - target) <= buffer,
-                ENumericCondition.NotEqual => !Mathf.Approximately(value, target) && Mathf.Abs(value - target) > buffer,
+                ENumericCondition.Equal => Mathf.Approximately(pValue, pTarget) || Mathf.Abs(pValue - pTarget) <= buffer,
+                ENumericCondition.NotEqual => !Mathf.Approximately(pValue, pTarget) && Mathf.Abs(pValue - pTarget) > buffer,
 
-                ENumericCondition.Greater => value + buffer > target,
-                ENumericCondition.GreaterOrEqual => Mathf.Approximately(value, target) || value + buffer >= target,
+                ENumericCondition.Greater => pValue + buffer > pTarget,
+                ENumericCondition.GreaterOrEqual => Mathf.Approximately(pValue, pTarget) || pValue + buffer >= pTarget,
 
-                ENumericCondition.Less => value - buffer < target,
-                ENumericCondition.LessOrEqual => Mathf.Approximately(value, target) || value - buffer <= target,
+                ENumericCondition.Less => pValue - buffer < pTarget,
+                ENumericCondition.LessOrEqual => Mathf.Approximately(pValue, pTarget) || pValue - buffer <= pTarget,
 
-                _ => throw new ArgumentOutOfRangeException(nameof(condition), condition, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(pCondition), pCondition, null)
             };
         }
 
         /// <summary>
         /// Checks if int Value matches the codition
         /// </summary>
-        public static bool IsMatching(int value, int target, ENumericCondition condition)
+        public static bool IsMatching(int value, int target, ENumericCondition pCondition)
         {
-            return condition switch
+            return pCondition switch
             {
                 ENumericCondition.Ignore => true,
 
@@ -82,7 +82,7 @@ namespace JvLib.Utilities
                 ENumericCondition.Less => value <= target,
                 ENumericCondition.LessOrEqual => value <= target,
 
-                _ => throw new ArgumentOutOfRangeException(nameof(condition), condition, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(pCondition), pCondition, null)
             };
         }
     }

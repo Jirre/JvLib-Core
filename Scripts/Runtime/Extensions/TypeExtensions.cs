@@ -6,7 +6,7 @@ namespace System
 {
     public static partial class TypeExtensions
     {
-        private static readonly Dictionary<Type, IList<Type>> typeToSubClasses
+        private static readonly Dictionary<Type, IList<Type>> TYPE_TO_SUB_CLASSES
             = new Dictionary<Type, IList<Type>>();
 
         public static AttributeClass GetAttribute<AttributeClass>(this Type type, bool inherit = false)
@@ -22,13 +22,8 @@ namespace System
 
         public static bool IsArrayOrList(this Type type)
         {
-            if (type.IsArray)
-                return true;
-
-            if (type.IsList())
-                return true;
-
-            return false;
+            return type.IsArray || 
+                   type.IsList();
         }
 
         public static bool IsList(this Type type)
@@ -61,11 +56,10 @@ namespace System
         public static IList<Type> FindAllSubclasses(this Type baseType, bool useCache = true)
         {
             IList<Type> result;
-            if (!useCache || !typeToSubClasses.TryGetValue(baseType, out result))
-            {
-                result = FindAllSubclassesInternal(baseType, useCache).AsReadOnly();
-                typeToSubClasses[baseType] = result;
-            }
+            if (useCache && TYPE_TO_SUB_CLASSES.TryGetValue(baseType, out result)) return result;
+            
+            result = FindAllSubclassesInternal(baseType, useCache).AsReadOnly();
+            TYPE_TO_SUB_CLASSES[baseType] = result;
 
             return result;
         }
@@ -78,9 +72,8 @@ namespace System
                 return result;
 
             IList<Type> types = AppDomain.CurrentDomain.GetAllTypes(useCache);
-            for (int i = 0; i < types.Count; i++)
+            foreach (Type type in types)
             {
-                Type type = types[i];
                 if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(baseType))
                 {
                     result.Add(type);
@@ -93,11 +86,10 @@ namespace System
         {
             List<Type> result = new List<Type>();
             IList<Type> types = AppDomain.CurrentDomain.GetAllTypes();
-            for (int j = 0; j < types.Count; j++)
+            foreach (Type getType in types)
             {
-                Type getType = types[j];
                 if (type.IsAssignableFrom(getType) && getType != type
-                    && (includeAbstract || !getType.IsAbstract))
+                                                   && (includeAbstract || !getType.IsAbstract))
                 {
                     result.Add(getType);
                 }
@@ -145,31 +137,32 @@ namespace System
                 if (type == typeof(TBaseClass) && !includeBaseClass)
                     break;
 
-                FieldInfo[] newFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                
-                fields.Capacity += newFields.Length;
-                for (int i = 0; i < newFields.Length; i++)
+                if (type != null)
                 {
-                    FieldInfo field = newFields[i];
-                    
-                    // If requested, filter out duplicates.
-                    if (cullDuplicates)
+                    FieldInfo[] newFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                
+                    fields.Capacity += newFields.Length;
+                    foreach (FieldInfo field in newFields)
                     {
-                        bool isCulledDuplicate = false;
-                        for (int j = 0; j < fields.Count; j++)
+                        // If requested, filter out duplicates.
+                        if (cullDuplicates)
                         {
-                            if (fields[j].Name == field.Name)
+                            bool isCulledDuplicate = false;
+                            for (int j = 0; j < fields.Count; j++)
                             {
-                                isCulledDuplicate = true;
-                                break;
+                                if (fields[j].Name == field.Name)
+                                {
+                                    isCulledDuplicate = true;
+                                    break;
+                                }
                             }
+                            if (isCulledDuplicate)
+                                continue;
                         }
-                        if (isCulledDuplicate)
-                            continue;
-                    }
                     
-                    if (includeObsolete || field.GetCustomAttributes(typeof(ObsoleteAttribute), false).Length == 0)
-                        fields.Add(field);
+                        if (includeObsolete || field.GetCustomAttributes(typeof(ObsoleteAttribute), false).Length == 0)
+                            fields.Add(field);
+                    }
                 }
 
                 type = type.BaseType;
@@ -186,21 +179,23 @@ namespace System
                 if (type == typeof(TBaseClass) && !includeBaseClass)
                     break;
 
-                PropertyInfo[] newProperties
-                    = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                if (includeObsolete)
+                if (type != null)
                 {
-                    properties.AddRange(newProperties);
-                }
-                else
-                {
-                    properties.Capacity += newProperties.Length;
-                    for (int i = 0; i < newProperties.Length; i++)
+                    PropertyInfo[] newProperties
+                        = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (includeObsolete)
                     {
-                        PropertyInfo property = newProperties[i];
-                        if (property.GetCustomAttributes(typeof(ObsoleteAttribute), false).Length == 0)
+                        properties.AddRange(newProperties);
+                    }
+                    else
+                    {
+                        properties.Capacity += newProperties.Length;
+                        foreach (PropertyInfo property in newProperties)
                         {
-                            properties.Add(property);
+                            if (property.GetCustomAttributes(typeof(ObsoleteAttribute), false).Length == 0)
+                            {
+                                properties.Add(property);
+                            }
                         }
                     }
                 }
@@ -233,9 +228,9 @@ namespace System
                 type, includeBaseClass);
 
             List<FieldType> values = new List<FieldType>();
-            for (int i = 0; i < fields.Count; i++)
+            foreach (FieldInfo t in fields)
             {
-                values.Add((FieldType)fields[i].GetValue(instance));
+                values.Add((FieldType)t.GetValue(instance));
             }
             return values;
         }
@@ -263,10 +258,7 @@ namespace System
             FieldInfo declaringField = type
                 .GetDeclaringFieldUpUntilBaseClass<TBaseClass, TFieldType>(instance, value);
 
-            if (declaringField == null)
-                return null;
-
-            return GetFieldName(type, declaringField, capitalize);
+            return declaringField == null ? null : GetFieldName(type, declaringField, capitalize);
         }
 
         public static string GetFieldName(this Type type, FieldInfo fieldInfo, bool capitalize = false)

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static partial class ParseUtility //Char
     {
@@ -10,8 +10,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static char CharParse(string pString, char pDefault = ' ')
         {
-            if (char.TryParse(pString, out char result)) return result;
-            return pDefault;
+            return char.TryParse(pString, out char result) ? result : pDefault;
         }
 
         /// <summary>
@@ -19,8 +18,7 @@ namespace JvLib.Utilities
         /// </summary>
         public static char CharParse(List<char> pList, int pIndex, char pDefault = ' ')
         {
-            if ((pList?.Count ?? 0) <= pIndex) return pDefault;
-            return pList[pIndex];
+            return (pList?.Count ?? 0) <= pIndex ? pDefault : pList[pIndex];
         }
 
         /// <summary>
@@ -29,12 +27,10 @@ namespace JvLib.Utilities
         public static List<char> CharParse(string pString, char pSeperator, char pDefault = ' ')
         {
             List<char> lList = new List<char>();
-            if ((pString?.Length ?? 0) > 0)
-            {
-                string[] lStrArray = pString.Split(pSeperator);
-                foreach (string lStr in lStrArray)
-                    lList.Add(CharParse(lStr, pDefault));
-            }
+            if ((pString?.Length ?? 0) <= 0) return lList;
+            string[] lStrArray = pString.Split(pSeperator);
+            foreach (string lStr in lStrArray)
+                lList.Add(CharParse(lStr, pDefault));
             return lList;
         }
 
@@ -44,9 +40,7 @@ namespace JvLib.Utilities
         public static char CharParse(IDictionary pDictionary, string pKey, char pDefault = ' ')
         {
             if (pDictionary == null || string.IsNullOrWhiteSpace(pKey)) return pDefault;
-            if (!pDictionary.Contains(pKey)) return pDefault;
-
-            return CharParse((string)pDictionary[pKey], pDefault);
+            return !pDictionary.Contains(pKey) ? pDefault : CharParse((string)pDictionary[pKey], pDefault);
         }
     }
 }

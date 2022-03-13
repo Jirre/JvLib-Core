@@ -3,7 +3,7 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static partial class StringUtility
     {
@@ -16,7 +16,7 @@ namespace JvLib.Utilities
             {
                 return false;
             }
-            return pStr[pIndex] == '1' ? true : false;
+            return pStr[pIndex] == '1';
         }
 
         /// <summary>
@@ -48,8 +48,8 @@ namespace JvLib.Utilities
             return enc.GetBytes(pString);
         }
 
-        private static readonly byte[] XORBITS = { 0xF6, 0x75, 0xF4, 0x73, 0xF2, 0x71, 0xF0, 0x6F, 0xEE, 0x6D, 0xEC, 0x6B, 0xEA, 0x69, 0xE8, 0x67, 0xE6, 0x65 };
-        private static readonly int XORBITCOUNT = XORBITS.Length;
+        private static readonly byte[] XOR_ORBITS = { 0xF6, 0x75, 0xF4, 0x73, 0xF2, 0x71, 0xF0, 0x6F, 0xEE, 0x6D, 0xEC, 0x6B, 0xEA, 0x69, 0xE8, 0x67, 0xE6, 0x65 };
+        private static readonly int XOR_BIT_COUNT = XOR_ORBITS.Length;
         
         /// <summary>
         /// Converts a secure ASCII Buffer into a Unicode string, making sure it doesn't overflow a regular byte-size
@@ -61,7 +61,7 @@ namespace JvLib.Utilities
 
             for (i = 0; i < pLength; i++)
             {
-                pBuffer[i + pOffset] = (byte)(pBuffer[i + pOffset] ^ XORBITS[(i % XORBITCOUNT)]);
+                pBuffer[i + pOffset] = (byte)(pBuffer[i + pOffset] ^ XOR_ORBITS[(i % XOR_BIT_COUNT)]);
             }
 
             return enc.GetString(pBuffer, pOffset, pLength);
@@ -80,7 +80,7 @@ namespace JvLib.Utilities
 
             for (i = 0; i < buffer.Length; i++)
             {
-                buffer[i] = (byte)(buffer[i] ^ XORBITS[(i % XORBITCOUNT)]);
+                buffer[i] = (byte)(buffer[i] ^ XOR_ORBITS[(i % XOR_BIT_COUNT)]);
             }
 
             return buffer;
@@ -89,18 +89,17 @@ namespace JvLib.Utilities
         /// <summary>
         /// Converts an ASCII buffer to a Hashtable
         /// </summary>
-        public static Hashtable AsciiToHashtable(byte[] pBuffer, int pOffset, int pLength, char pParamSeperator = ';', char pValueSeperator = '=')
+        public static Hashtable AsciiToHashtable(byte[] pBuffer, int pOffset, int pLength, char pParamSeparator = ';', char pValueSeparator = '=')
         {
             string msg = SecureAsciiBufferToUnicode(pBuffer, pOffset, pLength);
-            string[] keyvaluepairs = msg.Split(pParamSeperator);
-            int ispos;
+            string[] kvPairs = msg.Split(pParamSeparator);
             Hashtable ht = new Hashtable();
 
-            foreach (string kvp in keyvaluepairs)
+            foreach (string kvp in kvPairs)
             {
-                ispos = kvp.IndexOf(pValueSeperator);
-                if (ispos >= 0)
-                    ht.Add(kvp.Substring(0, ispos).Trim(), kvp.Substring(ispos + 1));
+                int sPos = kvp.IndexOf(pValueSeparator);
+                if (sPos >= 0)
+                    ht.Add(kvp.Substring(0, sPos).Trim(), kvp.Substring(sPos + 1));
             }
             return ht;
         }
@@ -108,9 +107,9 @@ namespace JvLib.Utilities
         /// <summary>
         /// Converts a Hashtable to an ASCII buffer
         /// </summary>
-        public static byte[] HashtableToAscii(Hashtable pHT)
+        public static byte[] HashtableToAscii(Hashtable pHashtable)
         {
-            string txt = HashtableToString(pHT);
+            string txt = HashtableToString(pHashtable);
 
             // Create encoding object
             Encoding enc = Encoding.UTF8;
@@ -127,10 +126,10 @@ namespace JvLib.Utilities
         /// <summary>
         /// Converts non-ASCII characters to an encoded style which is accepted
         /// </summary>
-        public static string NonAsciiToUnicode(string value)
+        public static string NonAsciiToUnicode(string pValue)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (char c in value)
+            foreach (char c in pValue)
             {
                 if (c > 127)
                 {
@@ -155,9 +154,7 @@ namespace JvLib.Utilities
             return Regex.Replace(
                 value,
                    @"\\u(?<Value>[a-zA-Z0-9]{4})",
-                   m => {
-                       return ((char)int.Parse(m.Groups["Value"].Value, System.Globalization.NumberStyles.HexNumber)).ToString();
-                   });
+                   m => ((char)int.Parse(m.Groups["Value"].Value, System.Globalization.NumberStyles.HexNumber)).ToString());
         }
         #endregion
 
@@ -200,18 +197,18 @@ namespace JvLib.Utilities
         /// <summary>
         /// Converts a hashtable to a collapsed string
         /// </summary>
-        public static string HashtableToString(Hashtable pHT, char pParamSeperator = ';', char pValueSeperator = '=')
+        public static string HashtableToString(Hashtable pHashtable, char pParamSeparator = ';', char pValueSeparator = '=')
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (string key in pHT.Keys)
+            foreach (string key in pHashtable.Keys)
             {
-                string val = pHT[key].ToString();
+                string val = pHashtable[key].ToString();
 
                 sb.Append(key);
-                sb.Append(pValueSeperator);
+                sb.Append(pValueSeparator);
                 sb.Append(val);
-                sb.Append(pParamSeperator);
+                sb.Append(pParamSeparator);
             }
 
             return sb.ToString();
@@ -221,14 +218,14 @@ namespace JvLib.Utilities
         private const string HUNGARIAN_PREFIX = "m_";
         private const string UNDERSCORE = "_";
         private const string HUMAN_READABLE_SEPARATOR = " ";
-        private const string SCREAM_WORD_SEPERATOR = "_";
+        private const string SCREAM_WORD_SEPARATOR = "_";
 
         /// <summary>
         /// Gets the human readable version of  programmer text like a variable name.
         /// </summary>
-        /// <param name="programmerText">The programmer text.</param>
+        /// <param name="pProgrammerText">The programmer text.</param>
         /// <returns>The human readable equivalent of the programmer text.</returns>
-        public static string GetHumanReadableText(string programmerText)
+        public static string GetHumanReadableText(string pProgrammerText)
         {
             bool wasLetter = false;
             bool wasUpperCase = false;
@@ -236,19 +233,19 @@ namespace JvLib.Utilities
             string result = "";
 
             // First remove the  prefix if it exists.
-            if (programmerText.StartsWith(HUNGARIAN_PREFIX))
-                programmerText = programmerText.Substring(HUNGARIAN_PREFIX.Length);
+            if (pProgrammerText.StartsWith(HUNGARIAN_PREFIX))
+                pProgrammerText = pProgrammerText.Substring(HUNGARIAN_PREFIX.Length);
 
-            // Deal with any miscellanneous underscores.
-            programmerText = programmerText.Replace(UNDERSCORE, string.Empty);
+            // Deal with any miscellaneous underscores.
+            pProgrammerText = pProgrammerText.Replace(UNDERSCORE, string.Empty);
 
             // Go through the original string and copy it with some modifications.
-            for (int i = 0; i < programmerText.Length; i++)
+            for (int i = 0; i < pProgrammerText.Length; i++)
             {
                 // If we try to convert "iOS" to a human readable string, this method would
                 // return something like "i Os". So we check if we find the text "iOS" here,
                 // and just copy it to the result.
-                if (MatchesIOS(programmerText, i))
+                if (MatchesIOS(pProgrammerText, i))
                 {
                     result += "iOS";
                     wasLetter = true;
@@ -258,7 +255,7 @@ namespace JvLib.Utilities
                 }
 
                 // If there was a change in caps add spaces.
-                bool isNumberOrUpper = char.IsUpper(programmerText[i]) || char.IsNumber(programmerText[i]);
+                bool isNumberOrUpper = char.IsUpper(pProgrammerText[i]) || char.IsNumber(pProgrammerText[i]);
                 if ((isNumberOrUpper != wasUpperCase)
                     && i > 0 && !addedSpace)
                 {
@@ -269,7 +266,7 @@ namespace JvLib.Utilities
                     {
                         // From letter to letter means we have to insert a space one character back.
                         // Otherwise it's going from a letter to a symbol and we can just add a space.
-                        if (wasLetter && char.IsLetter(programmerText[i]))
+                        if (wasLetter && char.IsLetter(pProgrammerText[i]))
                             result = result.Insert(result.Length - 1, HUMAN_READABLE_SEPARATOR);
                         else
                             result += HUMAN_READABLE_SEPARATOR;
@@ -289,15 +286,15 @@ namespace JvLib.Utilities
                 }
 
                 // Add the character.
-                result += programmerText[i];
+                result += pProgrammerText[i];
 
                 // Capitalize the first character.
                 if (i == 0)
                     result = result.ToUpper();
 
                 // Remember things about the previous letter.
-                wasLetter = char.IsLetter(programmerText[i]);
-                wasUpperCase = char.IsUpper(programmerText[i]);
+                wasLetter = char.IsLetter(pProgrammerText[i]);
+                wasUpperCase = char.IsUpper(pProgrammerText[i]);
             }
             return result;
         }
@@ -307,17 +304,17 @@ namespace JvLib.Utilities
         /// Is used in StringUtility.GetHumanReadableText above.
         /// <see cref="GetHumanReadableText"/>
         /// </summary>
-        /// <param name="programmerText">Text to match</param>
+        /// <param name="pProgrammerText">Text to match</param>
         /// <param name="i">Index to match at</param>
         /// <returns>If programmerText matches "iOS" at index i</returns>
-        private static bool MatchesIOS(string programmerText, int i)
+        private static bool MatchesIOS(string pProgrammerText, int i)
         {
-            if (programmerText.Length < i + 3)
+            if (pProgrammerText.Length < i + 3)
                 return false;
 
-            return programmerText[i] == 'i'
-                   && programmerText[i + 1] == 'O'
-                   && programmerText[i + 2] == 'S';
+            return pProgrammerText[i] == 'i'
+                   && pProgrammerText[i + 1] == 'O'
+                   && pProgrammerText[i + 2] == 'S';
         }
     }
 }

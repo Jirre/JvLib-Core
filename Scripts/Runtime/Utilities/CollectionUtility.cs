@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static class CollectionUtility
     {
@@ -14,12 +13,13 @@ namespace JvLib.Utilities
             Dictionary<TKey, TValue> result = new Dictionary<TKey, TValue>();
             foreach (KeyValuePair<object, object> e in pDictionary)
             {
-                TKey lKey = (TKey)e.Key;
-                TValue lValue = (TValue)e.Value;
+                TKey lKey = (TKey) e.Key;
+                TValue lValue = (TValue) e.Value;
                 if (lKey == null || lValue == null) continue;
 
                 result.Add(lKey, lValue);
             }
+
             return result;
         }
     }

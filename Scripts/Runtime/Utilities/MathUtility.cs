@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static class MathUtility
     {
@@ -62,12 +62,12 @@ namespace JvLib.Utilities
         /// <summary>
         /// Get the rotation in Degrees from origin to target
         /// </summary>
-        /// <param name="pOX">Origin X</param>
-        /// <param name="pOY">Origin Y</param>
-        /// <param name="pTX">Target X</param>
-        /// <param name="pTY">Target Y</param>
-        public static float DegPointDirection(float pOX, float pOY, float pTX, float pTY) =>
-            DegPointDirection(new Vector2(pOX, pOY), new Vector2(pTX, pTY));
+        /// <param name="pOx">Origin X</param>
+        /// <param name="pOy">Origin Y</param>
+        /// <param name="pTx">Target X</param>
+        /// <param name="pTy">Target Y</param>
+        public static float DegPointDirection(float pOx, float pOy, float pTx, float pTy) =>
+            DegPointDirection(new Vector2(pOx, pOy), new Vector2(pTx, pTy));
 
         /// <summary>
         /// Get the delta value of two degree based rotations
@@ -155,12 +155,12 @@ namespace JvLib.Utilities
         /// <summary>
         /// Get the rotation in Radians from origin to target
         /// </summary>
-        /// <param name="pOX">Origin X</param>
-        /// <param name="pOY">Origin Y</param>
-        /// <param name="pTX">Target X</param>
-        /// <param name="pTY">Target Y</param>
-        public static float RadPointDirection(float pOX, float pOY, float pTX, float pTY) =>
-            RadPointDirection(new Vector2(pOX, pOY), new Vector2(pTX, pTY));
+        /// <param name="pOx">Origin X</param>
+        /// <param name="pOy">Origin Y</param>
+        /// <param name="pTx">Target X</param>
+        /// <param name="pTy">Target Y</param>
+        public static float RadPointDirection(float pOx, float pOy, float pTx, float pTy) =>
+            RadPointDirection(new Vector2(pOx, pOy), new Vector2(pTx, pTy));
 
         /// <summary>
         /// Get the delta value of two radian based rotations

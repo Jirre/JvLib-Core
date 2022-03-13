@@ -2,60 +2,56 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace JvLib.Utilities
+namespace JvLib.Routines
 {
     public static partial class ParseUtility //Json
     {
         public static Hashtable JsonParse(string pJSONString)
         {
-            string lJSONStr = pJSONString.Replace("\"", "");
-            string[] keyvaluepairs = lJSONStr.Replace("\"", "").Split(';');
-            int ispos;
+            string lJsonStr = pJSONString.Replace("\"", "");
+            string[] kvPairs = lJsonStr.Replace("\"", "").Split(';');
             Hashtable ht = new Hashtable();
 
-            foreach (string kvp in keyvaluepairs)
+            foreach (string kvp in kvPairs)
             {
-                ispos = kvp.IndexOf('=');
+                int sPos = kvp.IndexOf('=');
 
-                if (ispos >= 0)
-                {
-                    // Add the key value pair
-                    Debug.Log("Adding:" + kvp.Substring(0, ispos).Trim() + "," + kvp.Substring(ispos + 1).Trim());
-                    ht.Add(kvp.Substring(0, ispos).Trim(), kvp.Substring(ispos + 1));
-                }
+                if (sPos < 0) continue;
+                // Add the key value pair
+                Debug.Log("Adding:" + kvp.Substring(0, sPos).Trim() + "," + kvp.Substring(sPos + 1).Trim());
+                ht.Add(kvp.Substring(0, sPos).Trim(), kvp.Substring(sPos + 1));
             }
             return ht;
         }
 
-        public static Hashtable JsonParse(string pJSONString, string pStructConstructor) => JsonParse(pJSONString, new string[] { pStructConstructor });
-        public static Hashtable JsonParse(string pJSONString, string[] pStructConstructor = null)
+        public static Hashtable JsonParse(string pJsonString, string pStructConstructor) => JsonParse(pJsonString, new string[] { pStructConstructor });
+        public static Hashtable JsonParse(string pJsonString, string[] pStructConstructor = null)
         {
-            string lJSONStr = pJSONString.Replace("\"", "");
+            string lJsonStr = pJsonString.Replace("\"", "");
             //Remove Struct Constructors
             if (pStructConstructor != null && pStructConstructor.Length > 0)
             {
-                for (int i = 0; i < pStructConstructor.Length; i++)
+                foreach (string s in pStructConstructor)
                 {
-                    if (!lJSONStr.Contains(pStructConstructor[i])) continue;
-                    lJSONStr = lJSONStr.Replace(pStructConstructor[i], "");
+                    if (!lJsonStr.Contains(s)) continue;
+                    lJsonStr = lJsonStr.Replace(s, "");
                 }
             }
 
             //Remove { } 
-            lJSONStr = Regex.Replace(lJSONStr, "[{}]", "");
+            lJsonStr = Regex.Replace(lJsonStr, "[{}]", "");
 
-            string[] keyvaluepairs = lJSONStr.Replace("\"", "").Split(';');
-            int ispos;
+            string[] kvPairs = lJsonStr.Replace("\"", "").Split(';');
             Hashtable ht = new Hashtable();
 
-            foreach (string kvp in keyvaluepairs)
+            foreach (string kvp in kvPairs)
             {
-                ispos = kvp.IndexOf(':');
+                int sPos = kvp.IndexOf(':');
 
-                if (ispos >= 0)
+                if (sPos >= 0)
                 {
                     // Add the key value pair
-                    ht.Add(kvp.Substring(0, ispos).Trim(), kvp.Substring(ispos + 1));
+                    ht.Add(kvp.Substring(0, sPos).Trim(), kvp.Substring(sPos + 1));
                 }
             }
 
