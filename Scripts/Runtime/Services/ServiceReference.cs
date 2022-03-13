@@ -57,7 +57,7 @@ namespace JvLib.Services
         /// Wait for this reference to be registered and call the callback when ready. If it already
         /// exists, it will be called immediately.
         /// </summary>
-        private void WaitForInstanceReady(OnReferenceStateDelegate callback)
+        public void WaitForInstanceReady(OnReferenceStateDelegate callback)
         {
             if (IsReady)
             {

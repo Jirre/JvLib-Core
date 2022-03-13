@@ -129,7 +129,7 @@ namespace JvLib.Services
 
         private bool IsServiceReady(Type pType)
         {
-            return HasService(pType) && _register[pType].IsReady;
+            return HasService(pType) && _register[pType].IsServiceReady;
         }
 
         private readonly Dictionary<Type, OnInstanceStateDelegate> _onReadyCallbacks;

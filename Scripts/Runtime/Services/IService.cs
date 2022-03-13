@@ -2,6 +2,6 @@ namespace JvLib.Services
 {
     public interface IService
     {
-        bool IsReady { get; }
+        bool IsServiceReady { get; }
     }
 }
