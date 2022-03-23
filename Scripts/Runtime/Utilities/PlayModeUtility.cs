@@ -1,7 +1,7 @@
 using System;
 using UnityEditor;
 
-namespace JvLib.Routines
+namespace JvLib.Utilities
 {
     public enum PlayModeState
     {

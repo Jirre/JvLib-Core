@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace JvLib.Routines
+namespace JvLib.Utilities
 {
     public static partial class ParseUtility //Char
     {

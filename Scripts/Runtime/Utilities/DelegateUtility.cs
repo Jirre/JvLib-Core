@@ -1,6 +1,6 @@
 using System;
 
-namespace JvLib.Routines
+namespace JvLib.Utilities
 {
     public static class DelegateUtility
     {

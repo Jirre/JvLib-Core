@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace JvLib.Routines
+namespace JvLib.Utilities
 {
     public static partial class ParseUtility //Collection
     {

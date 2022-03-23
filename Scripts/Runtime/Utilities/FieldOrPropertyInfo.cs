@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace JvLib.Routines
+namespace JvLib.Utilities
 {
     public enum EFieldPropertyType
     {

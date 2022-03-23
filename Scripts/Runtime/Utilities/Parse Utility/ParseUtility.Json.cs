@@ -2,7 +2,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace JvLib.Routines
+namespace JvLib.Utilities
 {
     public static partial class ParseUtility //Json
     {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace JvLib.Routines
+namespace JvLib.Utilities
 {
     public enum EBoolCondition
     {

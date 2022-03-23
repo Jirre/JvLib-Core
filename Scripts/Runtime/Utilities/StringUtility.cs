@@ -3,7 +3,7 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace JvLib.Routines
+namespace JvLib.Utilities
 {
     public static partial class StringUtility
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace JvLib.Routines
+namespace JvLib.Utilities
 {
     public class ColorUtility : MonoBehaviour
     {
