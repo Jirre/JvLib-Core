@@ -12,7 +12,7 @@ namespace JvLib.UI.Visualizers
             OnPopulateList(pContext);
         }
 
-        protected abstract void OnPopulateList(C pContent);
+        protected abstract void OnPopulateList(C pContext);
     }
 }
 
