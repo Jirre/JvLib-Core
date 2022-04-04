@@ -18,6 +18,9 @@ namespace JvLib.UI.Visualizers
 
         public void SetContext(C pContext)
         {
+            if (Context == null && pContext == null 
+                || Context != null && Context.Equals(pContext))
+                return;
             Context = pContext;
             _onContextChange.Dispatch();
         }

@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace JvLib.UI.Visualizers
 {
+    /// <typeparam name="C">List Context Type</typeparam>
+    /// <typeparam name="E">Entry Context Type</typeparam>
     public abstract class UIVisualizerList<C, E> : UIVisualizer<C> 
         where C : IVisualizerListContext<E>
     {
