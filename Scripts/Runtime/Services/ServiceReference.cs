@@ -13,7 +13,7 @@ namespace JvLib.Services
         /// Gets the cached reference to the service. Caches it first if it wasn't cached yet. Do not
         /// use in OnDestroy or OnDisable.
         /// </summary>
-        internal T Reference => _instance ??= ServiceLocator.Instance.GetInstance<T>();
+        public T Reference => _instance ??= ServiceLocator.Instance.GetInstance<T>();
 
         public bool Exists => ServiceLocator.Instance.HasService<T>();
 
