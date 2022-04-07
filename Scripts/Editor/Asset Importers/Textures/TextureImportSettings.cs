@@ -3,7 +3,10 @@ using UnityEditor;
 
 namespace JvLib.Editor.AssetImporters.Textures
 {
-    [CreateAssetMenu(fileName = "TextureImportSettings", menuName = "JvLib/Import Settings/Texture", order = 1)]
+    [CreateAssetMenu(
+        fileName = "TextureImportSettings", 
+        menuName = "JvLib/Import Settings/Texture", 
+        order = -75)]
     public class JvTextureImportSettings : ScriptableObject
     {
         public TextureImporterType TextureType = TextureImporterType.Default;
