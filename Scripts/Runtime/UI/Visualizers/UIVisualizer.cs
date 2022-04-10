@@ -1,11 +1,11 @@
 using System;
 using JvLib.Events;
-using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace JvLib.UI.Visualizers
 {
     /// <typeparam name="C">Context Type</typeparam>
-    public abstract class UIVisualizer<C> : MonoBehaviour
+    public abstract class UIVisualizer<C> : UIBehaviour
     {
         protected C Context { get; private set; }
 
