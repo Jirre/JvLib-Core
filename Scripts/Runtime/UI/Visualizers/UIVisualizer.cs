@@ -1,5 +1,6 @@
 using System;
 using JvLib.Events;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace JvLib.UI.Visualizers
@@ -7,7 +8,27 @@ namespace JvLib.UI.Visualizers
     /// <typeparam name="C">Context Type</typeparam>
     public abstract class UIVisualizer<C> : UIBehaviour
     {
-        protected C Context { get; private set; }
+        [SerializeField]
+        private C _Context;
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            OnContextUpdate(_Context);
+        }
+
+#if UNITY_EDITOR
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            OnContextUpdate(_Context);
+        }
+#endif
+        protected virtual C Context
+        {
+            get => _Context;
+            private set => SetContext(value);
+        }
 
         private SafeEvent _onContextChange = new SafeEvent();
         public event Action OnContextChange
@@ -21,7 +42,7 @@ namespace JvLib.UI.Visualizers
             if (Context == null && pContext == null
                 || Context != null && Context.Equals(pContext))
                 return;
-            Context = pContext;
+            _Context = pContext;
             OnContextUpdate(pContext);
             _onContextChange.Dispatch();
         }
