@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace JvLib.Utilities
 {
@@ -11,14 +12,14 @@ namespace JvLib.Utilities
         /// </summary>
         public static float FloatParse(string pString, float pDefault = 0f)
         {
-            return float.TryParse(pString, out float result) ? result : pDefault;
+            return float.TryParse(pString, NumberStyles.Any, CultureInfo.InvariantCulture, out float result) ? result : pDefault;
         }
         /// <summary>
         /// Attempts to parse a string to a float, using the default fallback upon a failure
         /// </summary>
         public static float FloatParse(string pString, System.Globalization.NumberStyles pStyle, float pDefault = 0)
         {
-            return float.TryParse(pString, pStyle, null, out float result) ? result : pDefault;
+            return float.TryParse(pString, pStyle, CultureInfo.InvariantCulture, out float result) ? result : pDefault;
         }
         /// <summary>
         /// Attempts to parse a string to a float, using the default fallback upon a failure

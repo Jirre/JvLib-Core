@@ -14,14 +14,16 @@ namespace JvLib.UI.Visualizers
         protected override void OnEnable()
         {
             base.OnEnable();
-            OnContextUpdate(_Context);
+            if (_Context != null)
+                OnContextUpdate(_Context);
         }
 
 #if UNITY_EDITOR
         protected override void OnValidate()
         {
             base.OnValidate();
-            OnContextUpdate(_Context);
+            if (_Context != null)
+                OnContextUpdate(_Context);
         }
 #endif
         protected virtual C Context
