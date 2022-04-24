@@ -46,7 +46,7 @@ namespace JvLib.Services
 
         public void Register<T>(T pInstance) where T : IService
         {
-            Type type = typeof(T);
+            Type type = pInstance.GetType();
             if (HasService(type))
             {
                 Debug.LogError($"Service of Type {type.FullName} already exists in the register.");
@@ -112,7 +112,7 @@ namespace JvLib.Services
 
         public void ReportInstanceReady<T>(T pInstance) where T : IService
         {
-            Type type = typeof(T);
+            Type type = pInstance.GetType();
             if (!HasService(type))
             {
                 Debug.LogError($"Service of Type {type.FullName} does not exists in the register.");
@@ -176,12 +176,12 @@ namespace JvLib.Services
 
         public void Remove<T>(T pInstance)
         {
-            if (!HasService(typeof(T)))
+            if (!HasService(pInstance.GetType()))
                 return;
             if (pInstance is IDisposable)
                 ((IDisposable)pInstance).Dispose();
             
-            _register.Remove(typeof(T));
+            _register.Remove(pInstance.GetType());
         }
 
         public void RemoveAll()
