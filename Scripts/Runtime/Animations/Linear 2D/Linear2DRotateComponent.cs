@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace JvLib.Animations.Linear2D
 {
+    [AddComponentMenu("JvLib/Animations/2D/Rotate")]
     public class Linear2DRotateComponent : MonoBehaviour
     {
         [Header("Rotation += [deltaTime * Mult]")]

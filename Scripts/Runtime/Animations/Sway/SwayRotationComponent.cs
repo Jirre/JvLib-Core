@@ -1,21 +1,12 @@
-using System;
 using UnityEngine;
 
 namespace JvLib.Animations.Sway
 {
+    [AddComponentMenu("JvLib/Animations/Sway/Rotation")]
     public class SwayRotationComponent : MonoBehaviour
     {
-        [Serializable]
-        public struct MovementStep
-        {
-            public Vector3 _Axis;
-            public ESwayMethod _Method;
-            public float _Multiplier;
-            public float _Offset;
-        }
-
         [Header("LocalEulerAngles = SUM( Axis * Method((Time * Multiplier) + Offset) )")]
-        [SerializeField] private MovementStep[] _Steps;
+        [SerializeField] private MovementStep<Vector3>[] _Steps;
         
         private void Update()
         {
@@ -23,10 +14,10 @@ namespace JvLib.Animations.Sway
             if (_Steps == null || _Steps.Length == 0)
                 return;
             
-            foreach (MovementStep step in _Steps)
+            foreach (MovementStep<Vector3> step in _Steps)
             {
                 transform.localEulerAngles +=
-                    step._Axis * SwayMethod.Solve(step._Method, Time.time * step._Multiplier + step._Offset);
+                    step._Value * SwayMethod.Solve(step._Method, Time.time * step._Multiplier + step._Offset);
             }
         }
     }

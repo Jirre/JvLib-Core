@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace JvLib.Animations.Linear2D
 {
-    public class Linear2DMovementComponent : MonoBehaviour
+    [AddComponentMenu("JvLib/Animations/2D/Position")]
+    public class Linear2DPositionComponent : MonoBehaviour
     {
         [SerializeField, Tooltip("Direction to move the player in, in Degrees)")] private float _Direction;
         public float Direction

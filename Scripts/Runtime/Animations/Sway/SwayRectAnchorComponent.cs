@@ -1,25 +1,16 @@
-using System;
 using JvLib.Utilities;
 using UnityEngine;
 
 namespace JvLib.Animations.Sway
 {
+    [AddComponentMenu("JvLib/Animations/Sway/Rect Anchor")]
     public class SwayRectAnchorComponent : MonoBehaviour
     {
         [SerializeField] private Vector2 _MinBase;
         [SerializeField] private Vector2 _MaxBase;
-        
-        [Serializable]
-        public struct MovementStep
-        {
-            public Vector2 _Delta;
-            public ESwayMethod _Method;
-            public float _Multiplier;
-            public float _Offset;
-        }
 
-        [SerializeField] private MovementStep[] _MinSteps;
-        [SerializeField] private MovementStep[] _MaxSteps;
+        [SerializeField] private MovementStep<Vector2>[] _MinSteps;
+        [SerializeField] private MovementStep<Vector2>[] _MaxSteps;
 
         private void Update()
         {
@@ -33,14 +24,14 @@ namespace JvLib.Animations.Sway
             if (_MinSteps == null || _MinSteps.Length == 0)
                 return;
             
-            foreach (MovementStep step in _MinSteps)
+            foreach (MovementStep<Vector2> step in _MinSteps)
             {
-                if (step._Delta == Vector2.zero ||
+                if (step._Value == Vector2.zero ||
                     FloatUtility.Equals(step._Multiplier, 0f, 0.02f))
                     continue;
 
                 ((RectTransform) transform).anchorMin +=
-                    step._Delta * SwayMethod.Solve(step._Method, Time.time * step._Multiplier + step._Offset);
+                    step._Value * SwayMethod.Solve(step._Method, Time.time * step._Multiplier + step._Offset);
             }
         }
         
@@ -50,14 +41,14 @@ namespace JvLib.Animations.Sway
             if (_MaxSteps == null || _MaxSteps.Length == 0)
                 return;
             
-            foreach (MovementStep step in _MaxSteps)
+            foreach (MovementStep<Vector2> step in _MaxSteps)
             {
-                if (step._Delta == Vector2.zero ||
+                if (step._Value == Vector2.zero ||
                     FloatUtility.Equals(step._Multiplier, 0f, 0.02f))
                     continue;
 
                 ((RectTransform) transform).anchorMax +=
-                    step._Delta * SwayMethod.Solve(step._Method, Time.time * step._Multiplier + step._Offset);
+                    step._Value * SwayMethod.Solve(step._Method, Time.time * step._Multiplier + step._Offset);
             }
         }
     }
