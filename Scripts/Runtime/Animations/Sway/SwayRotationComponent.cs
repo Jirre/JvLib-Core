@@ -6,7 +6,7 @@ namespace JvLib.Animations.Sway
     public class SwayRotationComponent : MonoBehaviour
     {
         [Header("LocalEulerAngles = SUM( Axis * Method((Time * Multiplier) + Offset) )")]
-        [SerializeField] private MovementStep<Vector3>[] _Steps;
+        [SerializeField] private SwayStep<Vector3>[] _Steps;
         
         private void Update()
         {
@@ -14,7 +14,7 @@ namespace JvLib.Animations.Sway
             if (_Steps == null || _Steps.Length == 0)
                 return;
             
-            foreach (MovementStep<Vector3> step in _Steps)
+            foreach (SwayStep<Vector3> step in _Steps)
             {
                 transform.localEulerAngles +=
                     step._Value * SwayMethod.Solve(step._Method, Time.time * step._Multiplier + step._Offset);

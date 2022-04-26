@@ -8,7 +8,7 @@ namespace JvLib.Animations.Sway
     {
 
         [Header("LocalPosition = SUM( Axis * Method((Time * Multiplier) + Offset) )")]
-        [SerializeField] private MovementStep<Vector3>[] _Steps;
+        [SerializeField] private SwayStep<Vector3>[] _Steps;
         
         private void Update()
         {
@@ -16,7 +16,7 @@ namespace JvLib.Animations.Sway
             if (_Steps == null || _Steps.Length == 0)
                 return;
             
-            foreach (MovementStep<Vector3> step in _Steps)
+            foreach (SwayStep<Vector3> step in _Steps)
             {
                 if (FloatUtility.Equals(step._Multiplier, 0f, 0.02f))
                     continue;

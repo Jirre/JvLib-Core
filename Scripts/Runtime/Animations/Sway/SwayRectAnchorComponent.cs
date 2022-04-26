@@ -9,8 +9,8 @@ namespace JvLib.Animations.Sway
         [SerializeField] private Vector2 _MinBase;
         [SerializeField] private Vector2 _MaxBase;
 
-        [SerializeField] private MovementStep<Vector2>[] _MinSteps;
-        [SerializeField] private MovementStep<Vector2>[] _MaxSteps;
+        [SerializeField] private SwayStep<Vector2>[] _MinSteps;
+        [SerializeField] private SwayStep<Vector2>[] _MaxSteps;
 
         private void Update()
         {
@@ -24,7 +24,7 @@ namespace JvLib.Animations.Sway
             if (_MinSteps == null || _MinSteps.Length == 0)
                 return;
             
-            foreach (MovementStep<Vector2> step in _MinSteps)
+            foreach (SwayStep<Vector2> step in _MinSteps)
             {
                 if (step._Value == Vector2.zero ||
                     FloatUtility.Equals(step._Multiplier, 0f, 0.02f))
@@ -41,7 +41,7 @@ namespace JvLib.Animations.Sway
             if (_MaxSteps == null || _MaxSteps.Length == 0)
                 return;
             
-            foreach (MovementStep<Vector2> step in _MaxSteps)
+            foreach (SwayStep<Vector2> step in _MaxSteps)
             {
                 if (step._Value == Vector2.zero ||
                     FloatUtility.Equals(step._Multiplier, 0f, 0.02f))
