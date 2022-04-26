@@ -25,7 +25,7 @@ namespace JvLib.Animations.Sway
 
         private void Update()
         {
-            transform.localScale = _BaseScale * _BaseMultiplier;
+            transform.localScale = _BaseScale;
             if (_Steps == null || _Steps.Length == 0 || _BaseMultiplier == 0f)
                 return;
             
