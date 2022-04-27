@@ -11,9 +11,9 @@ namespace JvLib.UI.Visualizers
         [SerializeField]
         private C _Context;
 
-        protected override void OnEnable()
+        protected override void Awake()
         {
-            base.OnEnable();
+            base.Awake();
             if (_Context != null)
                 OnContextUpdate(_Context);
         }
