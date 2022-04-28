@@ -1,12 +1,15 @@
+using System;
 using UnityEngine;
 
 namespace JvLib.Events
 {
-    public class EventState
+    /// <typeparam name="E">Enum Type</typeparam>
+    public class EventState<E>
+        where E : Enum
     {
         #region State Properties
 
-        public string Name { get; }
+        public E ID { get; }
 
         public bool IsFistFrame { get; private set; }
 
@@ -17,11 +20,11 @@ namespace JvLib.Events
 
         #region Constructor
 
-        public EventState(EventStateMachine pList, string pName, StateDelegate pUpdate,
+        public EventState(EventStateMachine<E> pList, E pID, StateDelegate pUpdate,
             StateDelegate pActivation = null, StateDelegate pDeactivation = null)
         {
             _eventStateList = pList;
-            Name = pName;
+            ID = pID;
             _updateFunction = pUpdate;
             _activateFunction = pActivation;
             _deactivateFunction = pDeactivation;
@@ -32,7 +35,7 @@ namespace JvLib.Events
 
         #region Update Functions
 
-        public delegate int StateDelegate(EventState pCallerEventState, float pTime);
+        public delegate int StateDelegate(EventState<E> pCallerEventState, float pTime);
 
         private readonly StateDelegate _activateFunction;
         private readonly StateDelegate _updateFunction;
@@ -91,30 +94,30 @@ namespace JvLib.Events
 
         #region State Navigation
 
-        private readonly EventStateMachine _eventStateList;
+        private readonly EventStateMachine<E> _eventStateList;
 
         /// <summary>
         /// Navigates to the requested state (if it exists)
         /// </summary>
-        /// <param name="pNameStr">Name of the state to navigate to</param>
+        /// <param name="pStateID">ID of the state to navigate to</param>
         /// <returns>Was navigating to the given state possible</returns>
-        public bool GotoState(string pNameStr) =>
-            _eventStateList?.GotoState(pNameStr) ?? false;
+        public bool GotoState(E pStateID) =>
+            _eventStateList?.GotoState(pStateID) ?? false;
 
         /// <summary>
         /// Requests the previous state of the parent state list
         /// </summary>
         /// <returns>The previous state found in the state list</returns>
-        public EventState GetPreviousState() =>
+        public EventState<E> GetPreviousState() =>
             _eventStateList?.PreviousEventState;
 
         /// <summary>
         /// Does the parent have a state with the given name
         /// </summary>
-        /// <param name="pName">Name of the state to look for</param>
+        /// <param name="pStateID">ID of the state to look for</param>
         /// <returns>Does the requested state exist</returns>
-        public bool HasState(string pName) =>
-            _eventStateList?.HasState(pName) ?? false;
+        public bool HasState(E pStateID) =>
+            _eventStateList?.HasState(pStateID) ?? false;
 
         #endregion
     }

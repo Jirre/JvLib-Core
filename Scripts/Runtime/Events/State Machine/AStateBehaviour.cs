@@ -1,35 +1,38 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace JvLib.Events
 {
-    public abstract class AStateBehaviour : MonoBehaviour
+    /// <typeparam name="E">Enum Type</typeparam>
+    public abstract class AStateBehaviour<E> : MonoBehaviour
+        where E : Enum
     {
-        public EventState GetCurrentState() =>
-            EventStates?.CurrentEventState;
+        public EventState<E> GetCurrentState() =>
+            EventStates.CurrentEventState;
 
-        public string GetCurrentStateName() =>
-            EventStates?.CurrentEventState?.Name ?? "NULL";
+        public E GetCurrentStateID() =>
+            EventStates.CurrentEventState.ID;
 
         public float GetCurrentStateTime() =>
             EventStates?.CurrentEventState?.GetTimeActive() ?? 0f;
 
-        public virtual void GotoState(string pState) =>
-            EventStates.GotoState(pState);
+        public virtual void GotoState(E pStateID) =>
+            EventStates.GotoState(pStateID);
 
-        public virtual void GotoState(EventState pEventState) =>
+        public virtual void GotoState(EventState<E> pEventState) =>
             EventStates.GotoState(pEventState);
 
-        protected EventStateMachine EventStates;
-        public virtual void InitStates()
+        protected EventStateMachine<E> EventStates;
+        public abstract void InitStates();
+
+        protected abstract int InitState(EventState<E> pEventState, float pTime);
+
+        protected virtual void Start()
         {
-            EventStates = new EventStateMachine(GetType().Name);
-            EventStates.Add("InitState", InitState);
-            EventStates.GotoState("InitState");
+            EventStates = new EventStateMachine<E>(GetType().Name);
+            InitStates();
         }
-
-        protected abstract int InitState(EventState pEventState, float pTime);
-
-        protected virtual void Start() => InitStates();
+            
         protected virtual void Update() => EventStates.Update(Time.time);
     }
 }

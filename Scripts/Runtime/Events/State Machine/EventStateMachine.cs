@@ -5,14 +5,16 @@ using System.Collections.Generic;
 
 namespace JvLib.Events
 {
+    /// <typeparam name="E">Enum Type</typeparam>
     [Serializable]
-    public class EventStateMachine
+    public class EventStateMachine<E> 
+        where E : Enum
     {
         private Hashtable _stateTable;
         public int Count => _stateTable?.Count ?? 0;
 
-        public EventState CurrentEventState { get; private set; }
-        public EventState PreviousEventState { get; private set; }
+        public EventState<E> CurrentEventState { get; private set; }
+        public EventState<E> PreviousEventState { get; private set; }
 
         private string _listName;
 
@@ -31,39 +33,39 @@ namespace JvLib.Events
         /// <summary>
         /// Is the current state the same as the given one
         /// </summary>
-        /// <param name="pName">The state to check against the current state</param>
-        public bool IsCurrentState(string pName) =>
-            (!string.IsNullOrEmpty(pName) && CurrentEventState?.Name == pName);
+        /// <param name="pID">The state to check against the current state</param>
+        public bool IsCurrentState(E pID) =>
+            CurrentEventState.ID.Equals(pID);
 
         /// <summary>
         /// Does the state machine contain a state with the given name
         /// </summary>
-        /// <param name="pName">The name of the state to check for</param>
-        public bool HasState(string pName) => _stateTable.ContainsKey(pName);
+        /// <param name="pStateID">The ID of the state to check for</param>
+        public bool HasState(E pStateID) => _stateTable.ContainsKey(pStateID);
 
         #endregion
 
         #region State Registration
 
-        public bool Add(string pName, EventState.StateDelegate pOnUpdate, EventState.StateDelegate pOnActivate,
-            EventState.StateDelegate pOnDeactivate)
+        public bool Add(E pStateID, EventState<E>.StateDelegate pOnUpdate, EventState<E>.StateDelegate pOnActivate,
+            EventState<E>.StateDelegate pOnDeactivate)
         {
             _stateTable ??= new Hashtable();
 
-            if (_stateTable.ContainsKey(pName))
+            if (_stateTable.ContainsKey(pStateID))
             {
-                Debug.LogError("StateList: re-adding state :" + pName);
+                Debug.LogError("StateList: re-adding state :" + pStateID);
                 return false;
             }
 
-            EventState lEventState = new EventState(this, pName, pOnUpdate, pOnActivate, pOnDeactivate);
-            _stateTable.Add(pName, lEventState);
+            EventState<E> lEventState = new EventState<E>(this, pStateID, pOnUpdate, pOnActivate, pOnDeactivate);
+            _stateTable.Add(pStateID, lEventState);
             return true;
         }
 
-        public bool Add(string pNameStr, EventState.StateDelegate pUpdate) => Add(pNameStr, pUpdate, null, null);
+        public bool Add(E pStateID, EventState<E>.StateDelegate pUpdate) => Add(pStateID, pUpdate, null, null);
 
-        public bool Add(EventState pEventState)
+        public bool Add(EventState<E> pEventState)
         {
             if (_stateTable == null) _stateTable = new Hashtable();
 
@@ -73,13 +75,13 @@ namespace JvLib.Events
                 return false;
             }
 
-            if (_stateTable.ContainsKey(pEventState.Name))
+            if (_stateTable.ContainsKey(pEventState.ID))
             {
-                Debug.LogError("StateList: re-adding state :" + pEventState.Name);
+                Debug.LogError("StateList: re-adding state :" + pEventState.ID);
                 return false;
             }
 
-            _stateTable.Add(pEventState.Name, pEventState);
+            _stateTable.Add(pEventState.ID, pEventState);
             return true;
         }
 
@@ -90,11 +92,11 @@ namespace JvLib.Events
         /// <summary>
         /// Gets the state within the state list with the given name
         /// </summary>
-        /// <param name="pName">Name of the state to return</param>
-        public EventState GetState(string pName)
+        /// <param name="pStateID">ID of the state to return</param>
+        public EventState<E> GetState(E pStateID)
         {
-            if (_stateTable.ContainsKey(pName))
-                return (EventState) _stateTable[pName];
+            if (_stateTable.ContainsKey(pStateID))
+                return (EventState<E>) _stateTable[pStateID];
             return null;
         }
 
@@ -104,11 +106,11 @@ namespace JvLib.Events
         /// <param name="pName">Name of the state to return</param>
         /// <param name="pEventState">Output of the state if found</param>
         /// <returns>Whether the state exists or not</returns>
-        public bool TryGetState(string pName, out EventState pEventState)
+        public bool TryGetState(string pName, out EventState<E> pEventState)
         {
             if (_stateTable.ContainsKey(pName))
             {
-                pEventState = (EventState) _stateTable[pName];
+                pEventState = (EventState<E>) _stateTable[pName];
                 return true;
             }
 
@@ -120,7 +122,7 @@ namespace JvLib.Events
         /// Sets the state of this state machine to the given state
         /// </summary>
         /// <param name="pEventState">The state to set the state-machine to</param>
-        public void GotoState(EventState pEventState)
+        public void GotoState(EventState<E> pEventState)
         {
             if (CurrentEventState == pEventState) // This is already the current state
                 return;
@@ -139,18 +141,18 @@ namespace JvLib.Events
         /// <summary>
         /// Sets the state of this state machine to the state with the given name
         /// </summary>
-        /// <param name="pName">Name of the state to set the state machine to</param>
+        /// <param name="pStateID">ID of the state to set the state machine to</param>
         /// <returns>Was the setting of the state successful</returns>
-        public bool GotoState(string pName)
+        public bool GotoState(E pStateID)
         {
-            EventState eventState = GetState(pName);
-            if (HasState(pName))
+            EventState<E> eventState = GetState(pStateID);
+            if (HasState(pStateID))
             {
                 GotoState(eventState);
                 return true;
             }
 
-            Debug.LogError("Unknown State:" + pName);
+            Debug.LogError("Unknown State:" + pStateID);
             return false;
         }
 
@@ -171,7 +173,7 @@ namespace JvLib.Events
             }
             catch (Exception lException)
             {
-                string lMessageStr = "State: " + _listName + "; Exception in Update state:" + CurrentEventState.Name +
+                string lMessageStr = "State: " + _listName + "; Exception in Update state:" + CurrentEventState.ID +
                                      ", " + lException;
                 Debug.LogError(lMessageStr);
             }
@@ -181,12 +183,12 @@ namespace JvLib.Events
 
         public override string ToString()
         {
-            string lStr = $"StateList {_listName} - {_stateTable} - {CurrentEventState?.Name ?? "null"}\n";
+            string lStr = $"StateList {_listName} - {_stateTable} - {CurrentEventState.ID}\n";
             foreach (KeyValuePair<string, object> e in _stateTable)
             {
-                if (e.Value is EventState s)
+                if (e.Value is EventState<E> s)
                 {
-                    lStr += $"{s.Name}\n";
+                    lStr += $"{s.ID}\n";
                 }
             }
 
