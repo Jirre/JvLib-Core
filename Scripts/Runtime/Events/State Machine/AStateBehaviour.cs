@@ -14,7 +14,7 @@ namespace JvLib.Events
             EventStates.CurrentEventState.ID;
 
         public float GetCurrentStateTime() =>
-            EventStates?.CurrentEventState?.GetTimeActive() ?? 0f;
+            EventStates?.CurrentEventState?.GetRealLifeTime() ?? 0f;
 
         public virtual void GotoState(E pStateID) =>
             EventStates.GotoState(pStateID);
@@ -33,6 +33,6 @@ namespace JvLib.Events
             InitStates();
         }
             
-        protected virtual void Update() => EventStates.Update(Time.time);
+        protected virtual void Update() => EventStates.Update();
     }
 }

@@ -14,7 +14,9 @@ namespace JvLib.Events
         public bool IsFistFrame { get; private set; }
 
         private float _activationTime;
-        public float GetTimeActive() => Time.time - _activationTime;
+        private float _lifeTime;
+        public float GetScaledLifeTime() => _lifeTime;
+        public float GetRealLifeTime() => Time.time - _activationTime;
 
         #endregion
 
@@ -35,7 +37,7 @@ namespace JvLib.Events
 
         #region Update Functions
 
-        public delegate int StateDelegate(EventState<E> pCallerEventState, float pTime);
+        public delegate void StateDelegate(EventState<E> pCallerEventState);
 
         private readonly StateDelegate _activateFunction;
         private readonly StateDelegate _updateFunction;
@@ -44,50 +46,32 @@ namespace JvLib.Events
         /// <summary>
         /// Calls the internal Update Function related to this state
         /// </summary>
-        /// <param name="pTime">Current Time to ascertain lifetime</param>
-        /// <returns>Return Code (-1 = internal Error)</returns>
-        public virtual int Update(float pTime)
+        /// <param name="pDeltaTime">Delta Time of this frame</param>
+        public virtual void Update(float pDeltaTime)
         {
-            int result = -1;
-            if (_updateFunction != null)
-                result = _updateFunction(this, pTime);
-
+            _updateFunction?.Invoke(this);
+            _lifeTime += pDeltaTime;
             IsFistFrame = false;
-            return result;
         }
 
         /// <summary>
         /// Calls the internal Activation Function related to this state
         /// </summary>
-        /// <param name="pTime">Current Time to ascertain lifetime</param>
-        /// <returns>Return Code (-1 = internal Error)</returns>
-        public virtual int Activate(float pTime)
+        /// <param name="pCurrentTime">Current Time to ascertain Real Life Time (Time.time)</param>
+        public virtual void Activate(float pCurrentTime)
         {
             IsFistFrame = true;
-            _activationTime = pTime;
-            if (_activateFunction != null)
-            {
-                int result = _activateFunction(this, pTime);
-                return result;
-            }
-
-            return -1;
+            _activationTime = pCurrentTime;
+            _lifeTime = 0;
+            _activateFunction?.Invoke(this);
         }
 
         /// <summary>
         /// Calls the internal Deactivation Function related to this state
         /// </summary>
-        /// <param name="pTime">Current Time to ascertain lifetime</param>
-        /// <returns>Return Code (-1 = internal Error)</returns>
-        public virtual int Deactivate(float pTime)
+        public virtual void Deactivate()
         {
-            if (_deactivateFunction != null)
-            {
-                int result = _deactivateFunction(this, pTime);
-                return result;
-            }
-
-            return -1;
+            _deactivateFunction?.Invoke(this);
         }
 
         #endregion

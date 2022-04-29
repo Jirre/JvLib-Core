@@ -67,7 +67,7 @@ namespace JvLib.Events
 
         public bool Add(EventState<E> pEventState)
         {
-            if (_stateTable == null) _stateTable = new Hashtable();
+            _stateTable ??= new Hashtable();
 
             if (pEventState == null)
             {
@@ -131,7 +131,7 @@ namespace JvLib.Events
             if (CurrentEventState != null)
             {
                 PreviousEventState = CurrentEventState;
-                PreviousEventState.Deactivate(currentTime);
+                PreviousEventState.Deactivate();
             }
 
             CurrentEventState = pEventState;
@@ -162,14 +162,12 @@ namespace JvLib.Events
         /// Updates the current state that is active within this State Machine
         /// </summary>
         /// <param name="pTime">Current time to register</param>
-        /// <returns>Return Code of the function</returns>
-        public int Update(float pTime)
+        public void Update()
         {
-            if (CurrentEventState == null) return -2;
-            int returnValue = 0;
+            if (CurrentEventState == null) return;
             try
             {
-                returnValue = CurrentEventState.Update(pTime);
+                CurrentEventState.Update(Time.deltaTime);
             }
             catch (Exception lException)
             {
@@ -177,8 +175,6 @@ namespace JvLib.Events
                                      ", " + lException;
                 Debug.LogError(lMessageStr);
             }
-
-            return returnValue;
         }
 
         public override string ToString()
