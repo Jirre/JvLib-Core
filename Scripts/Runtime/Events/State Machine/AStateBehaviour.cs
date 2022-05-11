@@ -24,9 +24,7 @@ namespace JvLib.Events
 
         protected EventStateMachine<E> EventStates;
         public abstract void InitStates();
-
-        protected abstract int InitState(EventState<E> pEventState, float pTime);
-
+        
         protected virtual void Start()
         {
             EventStates = new EventStateMachine<E>(GetType().Name);
