@@ -11,6 +11,7 @@ namespace JvLib.Editor.AssetImporters.Textures
         {
             if (!assetImporter.importSettingsMissing) return;
             TextureImporter importer = assetImporter as TextureImporter;
+            if (importer == null) return;
 
             string filePath = TrimToContainingFolder(assetPath);
 
