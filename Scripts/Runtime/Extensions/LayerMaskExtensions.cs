@@ -15,22 +15,8 @@ namespace UnityEngine
         ///   <para>Is this game object tagged with layer mask ?</para>
         /// </summary>
         /// <param name="layerMask">The layer mask to compare.</param>
-        public static bool CompareLayer(this Transform transform, LayerMask layerMask) =>
-            transform.gameObject.CompareLayer(layerMask);
-        
-        /// <summary>
-        ///   <para>Is this game object tagged with layer mask ?</para>
-        /// </summary>
-        /// <param name="layerMask">The layer mask to compare.</param>
-        public static bool CompareLayer(this Collider collider, LayerMask layerMask) =>
-            collider.gameObject.CompareLayer(layerMask);
-        
-        /// <summary>
-        ///   <para>Is this game object tagged with layer mask ?</para>
-        /// </summary>
-        /// <param name="layerMask">The layer mask to compare.</param>
-        public static bool CompareLayer(this Collider2D collider2D, LayerMask layerMask) =>
-            collider2D.gameObject.CompareLayer(layerMask);
+        public static bool CompareLayer(this Component component, LayerMask layerMask) =>
+            component.gameObject.CompareLayer(layerMask);
     }
 }
 
