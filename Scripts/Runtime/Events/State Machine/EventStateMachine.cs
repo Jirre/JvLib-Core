@@ -26,6 +26,8 @@ namespace JvLib.Events
             _stateTable = new Hashtable();
         }
 
+        public bool IsRunning() => CurrentEventState != null;
+
         #endregion
 
         #region State Access
