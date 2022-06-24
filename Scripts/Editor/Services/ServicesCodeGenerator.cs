@@ -26,7 +26,7 @@ namespace JvLib.Editor.Services
             return string.Compare(a.Name, b.Name, StringComparison.Ordinal);
         }
 
-        [MenuItem("JvLib/Code Generation/Generate Services")]
+        [MenuItem("Tools/JvLib/Code Generation/Generate Services")]
         private static void GenerateServicesClass()
         {
             IList<Type> allTypes = AppDomain.CurrentDomain.GetAllTypes(AssembliesType.Player);

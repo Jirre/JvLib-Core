@@ -22,6 +22,12 @@ namespace JvLib.Services
             _onRegisterCallbacks = new Dictionary<Type, OnInstanceStateDelegate>();
             _onReadyCallbacks = new Dictionary<Type, OnInstanceStateDelegate>();
         }
+        
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void Init()
+        {
+            _instance = null;
+        }
 
         #region --- GET ---
 

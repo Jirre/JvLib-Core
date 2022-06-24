@@ -6,7 +6,7 @@ namespace JvLib.Editor.AssetImporters.Textures
     [CreateAssetMenu(
         fileName = "TextureImportSettings", 
         menuName = "JvLib/Import Settings/Texture", 
-        order = -75)]
+        order = 175)]
     public class JvTextureImportSettings : ScriptableObject
     {
         public TextureImporterType TextureType = TextureImporterType.Default;
